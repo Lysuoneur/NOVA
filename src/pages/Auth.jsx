@@ -180,17 +180,6 @@ export default function Auth() {
               </button>
             </form>
 
-            {/* Quick fill hint */}
-            <div className="mt-6 pt-5 border-t border-white/[0.07]">
-              <div className="font-mono text-[9px] uppercase tracking-widest text-white/20 mb-2">Demo credentials</div>
-              <button
-                onClick={() => { setEmail("admin@nova.com"); setPassword("password"); }}
-                className="w-full text-left bg-white/[0.03] border border-white/[0.07] rounded-xl p-3 hover:bg-white/[0.07] transition-colors group"
-              >
-                <div className="font-mono text-[10px] text-[#d4af37]/70 group-hover:text-[#d4af37] transition-colors">admin@nova.com / password</div>
-                <div className="font-mono text-[9px] text-white/20 mt-0.5">Click to autofill →</div>
-              </button>
-            </div>
           </div>
 
           {/* Switch to regular login */}
@@ -360,27 +349,6 @@ export default function Auth() {
               </div>
             </div>
 
-            <div className="border-t border-black/10 pt-6">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-black/40 font-bold block mb-3">
-                INTEGRATED DEMO ENGINES:
-              </span>
-              <div className="grid gap-2">
-                <button
-                  onClick={() => { setEmail("admin@nova.com"); setPassword("password"); setMode("login"); }}
-                  className="w-full border border-black bg-white text-black p-3 font-mono text-xs text-left flex justify-between items-center hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
-                >
-                  <span>[01] ADMIN DEV MATRIX</span>
-                  <span>→</span>
-                </button>
-                <button
-                  onClick={() => { setEmail("user@nova.com"); setPassword("password"); setMode("login"); }}
-                  className="w-full border border-black bg-white text-black p-3 font-mono text-xs text-left flex justify-between items-center hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
-                >
-                  <span>[02] PUBLIC CLIENT NODE</span>
-                  <span>→</span>
-                </button>
-              </div>
-            </div>
 
             {/* Admin Login CTA */}
             <div className="border-t border-black/10 pt-6">
@@ -400,12 +368,9 @@ export default function Auth() {
             </div>
           </div>
 
-          <div className="pt-8 border-t border-black/5 space-y-2">
+          <div className="pt-8 border-t border-black/5">
             <div className="flex items-center gap-2 text-black/40 font-mono text-[9px] uppercase tracking-widest">
               <span>🔒 ENCRYPTION SECURE STATUS</span>
-            </div>
-            <div className="text-[9px] font-mono text-black/30 tracking-tight leading-none uppercase">
-              CREDENTIAL_REF // ADMIN: admin@nova.com · PASS: password
             </div>
           </div>
         </div>
