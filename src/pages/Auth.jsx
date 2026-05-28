@@ -337,41 +337,24 @@ export default function Auth() {
           </div>
         </div>
 
-        {/* Right Side: Brutalist Sandbox Info Panel */}
-        <div className="p-8 md:p-12 bg-black/[0.02] flex flex-col justify-between">
-          <div className="space-y-6">
+        {/* Right Side */}
+        <div className="p-8 md:p-12 bg-black flex flex-col justify-between">
+          <div className="space-y-8">
             <div>
-              <div className="font-mono text-[9px] uppercase tracking-widest text-black/40 mb-1 font-bold">
-                // SYSTEM VERIFICATION
-              </div>
-              <div className="text-[11px] font-mono text-black/60 uppercase tracking-wide leading-relaxed">
-                NOVA interfaces are configured with secure identity tokens. Select an entry vector to check runtime behavior instantly.
-              </div>
+              <div className="font-display text-5xl text-white tracking-tighter uppercase leading-none">NOVA</div>
+              <div className="font-mono text-[10px] text-white/30 uppercase tracking-widest mt-1">KH × VN Streetwear</div>
             </div>
-
-
-            {/* Admin Login CTA */}
-            <div className="border-t border-black/10 pt-6">
-              <div className="font-mono text-[9px] uppercase tracking-widest text-black/30 mb-3">Admin Access</div>
-              <Link
-                to="/auth?admin=1"
-                className="flex items-center justify-between w-full bg-black text-white p-3 font-mono text-xs hover:bg-black/80 transition-colors group"
-              >
-                <span className="flex items-center gap-2">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                  </svg>
-                  ADMIN PANEL LOGIN
-                </span>
-                <span className="text-white/40 group-hover:text-white transition-colors">→</span>
-              </Link>
+            <div className="space-y-4">
+              {["Free shipping over $50", "Bakong KHQR payment", "Track your orders", "Exclusive drops"].map((item) => (
+                <div key={item} className="flex items-center gap-3">
+                  <span className="w-1 h-1 bg-white/40 rounded-full flex-shrink-0" />
+                  <span className="font-mono text-xs text-white/50 uppercase tracking-wider">{item}</span>
+                </div>
+              ))}
             </div>
           </div>
-
-          <div className="pt-8 border-t border-black/5">
-            <div className="flex items-center gap-2 text-black/40 font-mono text-[9px] uppercase tracking-widest">
-              <span>🔒 ENCRYPTION SECURE STATUS</span>
-            </div>
+          <div className="border-t border-white/10 pt-6">
+            <div className="font-mono text-[9px] text-white/20 uppercase tracking-widest">🔒 Secured by Firebase Auth</div>
           </div>
         </div>
 
