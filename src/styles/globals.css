@@ -50,14 +50,15 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     border-radius: 9999px;
     pointer-events: none;
     z-index: 9999;
-    background: #0a0a0a;
-    mix-blend-mode: difference;
-    transition: transform .12s ease, width .12s ease, height .12s ease;
+    background: #ffffff;
+    border: 2px solid #000000;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.8);
+    transition: transform .1s ease, width .12s ease, height .12s ease, background .12s ease;
     transform: translate(-50%, -50%);
 }
 
@@ -65,7 +66,8 @@ body {
     width: 36px;
     height: 36px;
     background: #d4af37;
-    mix-blend-mode: normal;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.3);
 }
 
 
@@ -298,8 +300,9 @@ body {
     border-radius: 9999px;
     pointer-events: none;
     z-index: 99999;
-    background: var(--black);
-    mix-blend-mode: difference;
+    background: #ffffff;
+    border: 2px solid #000000;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.8);
     transition: transform .1s ease, width .12s ease, height .12s ease, background .12s ease;
     transform: translate(-50%, -50%);
 }
@@ -307,8 +310,9 @@ body {
 #nova-cursor.hovering {
     width: 40px;
     height: 40px;
-    background: var(--gold);
-    mix-blend-mode: normal;
+    background: #d4af37;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.3);
 }
 
 
