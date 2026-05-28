@@ -1,0 +1,971 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap');
+
+/* Leaflet map tiles fix */
+
+.leaflet-container {
+    font: inherit;
+}
+
+
+/* ── Global Reset ── */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    background: #ffffff;
+    color: #0a0a0a;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    scrollbar-width: thin;
+    scrollbar-color: #0a0a0a #f0f0f0;
+}
+
+*::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #0a0a0a;
+    border-radius: 99px;
+}
+
+
+/* ── Custom Cursor ── */
+
+html,
+body {
+    cursor: none;
+}
+
+#nova-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    pointer-events: none;
+    z-index: 9999;
+    background: #0a0a0a;
+    mix-blend-mode: difference;
+    transition: transform .12s ease, width .12s ease, height .12s ease;
+    transform: translate(-50%, -50%);
+}
+
+#nova-cursor.hovering {
+    width: 36px;
+    height: 36px;
+    background: #d4af37;
+    mix-blend-mode: normal;
+}
+
+
+/* ── Y2K Status Bar ── */
+
+.nova-status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    height: 28px;
+    background: #0a0a0a;
+    border-top: 1px solid #d4af37;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    gap: 0;
+}
+
+.status-segment {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 14px;
+    height: 100%;
+    border-right: 1px solid rgba(212, 175, 55, 0.3);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #b4ff00;
+    animation: pulse2 1.5s ease-in-out infinite;
+}
+
+.status-dot.gold {
+    background: #d4af37;
+}
+
+.status-dot.pink {
+    background: #ff69b4;
+}
+
+.status-marquee {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.status-marquee-inner {
+    display: flex;
+    gap: 0;
+    animation: ticker 40s linear infinite;
+    white-space: nowrap;
+}
+
+.status-marquee-item {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 0 20px;
+    border-right: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+
+/* ── Typography Utilities ── */
+
+.font-display {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.03em;
+}
+
+.font-mono {
+    font-family: 'Space Mono', monospace;
+}
+
+
+/* ── Y2K Chrome Badge ── */
+
+.chrome-badge {
+    background: linear-gradient(135deg, #e8e8e8 0%, #ffffff 40%, #c4c4c4 60%, #f0f0f0 100%);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Global Reset ── */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --gold: #d4af37;
+    --gold-light: #f0d060;
+    --gold-dim: rgba(212, 175, 55, 0.15);
+    --black: #0a0a0a;
+    --off-white: #f8f8f6;
+    --surface: #ffffff;
+    --border: rgba(0, 0, 0, 0.08);
+    --text-dim: rgba(0, 0, 0, 0.45);
+    --text-mid: rgba(0, 0, 0, 0.65);
+    --radius-card: 18px;
+    --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.13), 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-glow: 0 0 0 1px rgba(212, 175, 55, 0.2), 0 8px 32px rgba(212, 175, 55, 0.12);
+}
+
+html,
+body {
+    background: #ffffff;
+    color: var(--black);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    scrollbar-width: thin;
+    scrollbar-color: #0a0a0a #f0f0f0;
+    padding-bottom: 32px;
+}
+
+*::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #0a0a0a;
+    border-radius: 99px;
+}
+
+
+/* ── TOP RUNNING LINE ── */
+
+.nova-top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    height: 30px;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+.nova-top-bar-track {
+    display: flex;
+    white-space: nowrap;
+    animation: topBarScroll 28s linear infinite;
+    gap: 0;
+}
+
+.nova-top-bar-item {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0 22px;
+    border-right: 1px solid rgba(212, 175, 55, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 30px;
+}
+
+.nova-top-bar-item .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse2 1.8s ease-in-out infinite;
+}
+
+.nova-top-bar-item .dot.green {
+    background: #b4ff00;
+}
+
+.nova-top-bar-item .dot.pink {
+    background: #ff69b4;
+}
+
+@keyframes topBarScroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+
+/* App layout offset for top bar */
+
+#app-root {
+    padding-top: 30px;
+}
+
+
+/* ── Custom Cursor ── */
+
+html,
+body {
+    cursor: none;
+}
+
+#nova-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    pointer-events: none;
+    z-index: 99999;
+    background: var(--black);
+    mix-blend-mode: difference;
+    transition: transform .1s ease, width .12s ease, height .12s ease, background .12s ease;
+    transform: translate(-50%, -50%);
+}
+
+#nova-cursor.hovering {
+    width: 40px;
+    height: 40px;
+    background: var(--gold);
+    mix-blend-mode: normal;
+}
+
+
+/* ── Status Bar ── */
+
+.nova-status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    height: 32px;
+    background: var(--black);
+    border-top: 1px solid rgba(212, 175, 55, 0.35);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.status-segment {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 14px;
+    height: 100%;
+    border-right: 1px solid rgba(212, 175, 55, 0.2);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.65);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #b4ff00;
+    animation: pulse2 1.5s ease-in-out infinite;
+}
+
+.status-dot.gold {
+    background: var(--gold);
+}
+
+.status-dot.pink {
+    background: #ff69b4;
+}
+
+.status-marquee {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.status-marquee-inner {
+    display: flex;
+    animation: ticker 38s linear infinite;
+    white-space: nowrap;
+}
+
+.status-marquee-item {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.45);
+    padding: 0 20px;
+    border-right: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+
+/* ── Typography ── */
+
+.font-display {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.04em;
+}
+
+.font-mono {
+    font-family: 'Space Mono', monospace;
+}
+
+
+/* ── Cards ── */
+
+.nova-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+    box-shadow: var(--shadow-card);
+}
+
+.nova-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-3px);
+    border-color: rgba(212, 175, 55, 0.2);
+}
+
+
+/* ── Glass Card ── */
+
+.nova-glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+}
+
+
+/* ── Pill button ── */
+
+.nova-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 22px;
+    border-radius: 9999px;
+    border: 1.5px solid var(--border);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    background: var(--surface);
+    color: var(--black);
+    text-decoration: none;
+}
+
+.nova-pill:hover {
+    border-color: var(--gold);
+    box-shadow: 0 3px 12px rgba(212, 175, 55, 0.25);
+    transform: translateY(-1px);
+}
+
+.nova-pill.solid {
+    background: var(--black);
+    color: #fff;
+    border-color: var(--black);
+}
+
+.nova-pill.solid:hover {
+    background: #1a1a1a;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    transform: translateY(-1px);
+}
+
+.nova-pill.gold {
+    background: var(--gold);
+    color: var(--black);
+    border-color: var(--gold);
+}
+
+.nova-pill.gold:hover {
+    background: var(--gold-light);
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+}
+
+
+/* ── Tags ── */
+
+.nova-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--black);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+}
+
+.nova-tag.gold {
+    background: var(--gold);
+    color: var(--black);
+}
+
+.nova-tag.outline {
+    background: transparent;
+    border: 1px solid var(--black);
+    color: var(--black);
+}
+
+.nova-tag.outline-gold {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+}
+
+
+/* ── Input ── */
+
+.nova-input {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 15px;
+    font-size: 14px;
+    outline: none;
+    background: var(--surface);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.nova-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+}
+
+/* ── Dark admin overrides ── */
+.admin-dark .nova-input {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.85);
+}
+.admin-dark .nova-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+.admin-dark .nova-input::placeholder {
+    color: rgba(255,255,255,0.2);
+}
+.admin-dark option {
+    background: #1a1a1a;
+    color: white;
+}
+
+
+/* ── Grid lines background ── */
+
+.grid-lines-bg {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+}
+
+
+/* ── Grain overlay ── */
+
+.grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+
+/* ── Divider ── */
+
+.nova-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-dim);
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+}
+
+.nova-divider::before,
+.nova-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+
+/* ── Ticker ── */
+
+.nova-ticker {
+    width: 100%;
+    overflow: hidden;
+}
+
+.nova-ticker-track {
+    display: flex;
+    white-space: nowrap;
+    animation: ticker 25s linear infinite;
+}
+
+.nova-ticker-track.slow {
+    animation-duration: 40s;
+}
+
+.nova-ticker-track.gold-track {
+    animation-duration: 35s;
+}
+
+
+/* ── Stat number ── */
+
+.stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: 0.04em;
+    line-height: 1;
+}
+
+
+/* ── Admin sidebar ── */
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+}
+
+.admin-nav-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.admin-nav-link.active {
+    color: var(--black);
+    background: white;
+    font-weight: 600;
+}
+
+
+/* ── Admin stat card ── */
+
+.admin-stat-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.admin-stat-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.admin-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+}
+
+.admin-stat-card.gold::before {
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+}
+
+.admin-stat-card.black::before {
+    background: var(--black);
+}
+
+.admin-stat-card.green::before {
+    background: #b4ff00;
+}
+
+.admin-stat-card.pink::before {
+    background: #ff69b4;
+}
+
+
+/* ── Progress bar ── */
+
+.nova-progress {
+    height: 4px;
+    background: rgba(0, 0, 0, 0.07);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.nova-progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--gold);
+    transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+
+/* ── Animations ── */
+
+.animate-slideUp {
+    animation: slideUp 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(14px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    from {
+        background-position: -200% center;
+    }
+    to {
+        background-position: 200% center;
+    }
+}
+
+@keyframes ticker {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes pulse2 {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.25;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* ── Hover reveal ── */
+
+.hover-reveal {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.group:hover .hover-reveal {
+    opacity: 1;
+}
+
+
+/* ── Section label ── */
+
+.section-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 4px;
+}
+
+
+/* ── Gold shimmer line ── */
+
+.gold-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.black-gold-line {
+    height: 2px;
+    background: linear-gradient(90deg, var(--black) 0%, var(--gold) 50%, var(--black) 100%);
+}
+
+
+/* ── Table ── */
+
+.nova-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.nova-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    background: var(--off-white);
+    border-bottom: 1px solid var(--border);
+}
+
+.nova-table th:first-child {
+    border-radius: 8px 0 0 0;
+}
+
+.nova-table th:last-child {
+    border-radius: 0 8px 0 0;
+}
+
+.nova-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    vertical-align: middle;
+}
+
+.nova-table tr:last-child td {
+    border-bottom: none;
+}
+
+.nova-table tr:hover td {
+    background: rgba(212, 175, 55, 0.04);
+}
+
+
+/* ── Status badges ── */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Space Mono', monospace;
+}
+
+.badge.green {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.badge.yellow {
+    background: #fef9c3;
+    color: #a16207;
+}
+
+.badge.red {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.badge.blue {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.badge.gray {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+
+/* ── Reduce motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+    .nova-ticker-track,
+    .nova-top-bar-track,
+    .status-marquee-inner {
+        animation: none !important;
+    }
+}
+
+
+/* Add these classes at the bottom of your globals.css */
+
+
+/* ── Cyber Brutalism Extensions ── */
+
+.brutal-glow {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05), 0 0 1px 1px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brutal-glow:hover {
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.25), 0 0 0 2px var(--gold);
+    transform: translateY(-2px);
+}
+
+
+/* ── Brand Highlight Panels ── */
+
+.brand-showcase-card {
+    position: relative;
+    isolation: isolate;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.85) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brand-showcase-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(800px circle at var(--x, 50%) var(--y, 50%), rgba(212, 175, 55, 0.08), transparent 40%);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.brand-showcase-card:hover::before {
+    opacity: 1;
+}
+
+
+/* ── Kinetic Typography Elements ── */
+
+.text-stroke-premium {
+    -webkit-text-stroke: 1.5px rgba(0, 0, 0, 0.85);
+    color: transparent;
+}
+
+.text-stroke-white {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+    color: transparent;
+}
+
+
+/* ── Deep Cyber Grid ── */
+
+.cyber-grid-overlay {
+    background-size: 20px 20px;
+    background-image: linear-gradient(to right, rgba(212, 175, 55, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+}
