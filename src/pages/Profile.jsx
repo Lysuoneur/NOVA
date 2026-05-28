@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { getSafeImage } from "../api";
 import { PRODUCTS } from "../data/novaData";
 import { useCartStore } from "../store/cart";
@@ -23,6 +23,9 @@ function formatOrderDate(ts) {
 export default function Profile() {
   const user           = useUserStore((s) => s.user);
   const orders         = useUserStore((s) => s.orders);
+  const isAdmin        = user?.role === "admin" || user?.email === "admin@nova.com";
+
+  if (isAdmin) return <Navigate to="/admin" replace />;
   const logout         = useUserStore((s) => s.logout);
   const toggleWishlist = useUserStore((s) => s.toggleWishlist);
   const addToCart      = useCartStore((s) => s.add);
