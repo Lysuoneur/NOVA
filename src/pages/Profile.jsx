@@ -138,7 +138,7 @@ export default function Profile() {
                       </div>
                       <div className="divide-y divide-black/[0.04]">
                         {order.items.map((item, idx) => {
-                          const product = PRODUCTS.find((p) => p.id === item.productId);
+                          const product = allProducts.find((p) => p.id === item.productId);
                           const title   = item.product_title || item.productTitle || (product ? product.name : null) || `Item ${idx + 1}`;
                           return (
                             <div key={idx} className="py-3 flex items-center justify-between gap-4 text-sm">
