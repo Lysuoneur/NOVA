@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { getSafeImage, placeOrder } from "../api";
 import { CAMBODIA_PROVINCES, PAYMENT } from "../data/novaData";
 import { useCartStore } from "../store/cart";
@@ -29,8 +29,8 @@ function PaymentForm() {
     setForm((f) => ({ ...f, ship_name: user?.name || f.ship_name }));
   }, [user]);
 
-  const shipping = subtotal > 50 ? 0 : 3.99;
-  const total    = subtotal + shipping;
+  const shipping = 0;
+  const total    = subtotal;
   const f        = (k) => (e) => setForm((s) => ({ ...s, [k]: e.target.value }));
 
   const onPay = async (e) => {
@@ -88,6 +88,9 @@ function PaymentForm() {
       </div>
     );
   }
+
+  // ── Not logged in ────────────────────────────────────────────────────────
+  if (!user) return <Navigate to="/auth" replace />;
 
   // ── Empty cart ───────────────────────────────────────────────────────────
   if (items.length === 0) {
@@ -190,9 +193,7 @@ function PaymentForm() {
           ))}
         </div>
         <div className="mt-4 space-y-1.5 text-sm border-t border-black/[0.06] pt-4">
-          <div className="flex justify-between text-black/60"><span>Subtotal</span><span>{money(subtotal)}</span></div>
-          <div className="flex justify-between text-black/60"><span>Shipping</span><span>{shipping === 0 ? "Free" : money(shipping)}</span></div>
-          <div className="flex justify-between font-semibold border-t border-black/[0.06] pt-2 text-base">
+          <div className="flex justify-between font-semibold pt-2 text-base">
             <span>Total</span><span>{money(total)}</span>
           </div>
         </div>
