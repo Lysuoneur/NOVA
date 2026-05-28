@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, Navigate } from "react-router-dom";
-import { getSafeImage } from "../api";
-import { PRODUCTS } from "../data/novaData";
+import { getSafeImage, getProducts } from "../api";
 import { useCartStore } from "../store/cart";
 import { useUserStore } from "../store/user";
 import { money } from "../utils/format";
@@ -29,8 +28,13 @@ export default function Profile() {
   const logout         = useUserStore((s) => s.logout);
   const toggleWishlist = useUserStore((s) => s.toggleWishlist);
   const addToCart      = useCartStore((s) => s.add);
-  const [tab, setTab]  = React.useState("orders");
+  const [tab, setTab]       = React.useState("orders");
   const [retrying, setRetrying] = React.useState(null);
+  const [allProducts, setAllProducts] = React.useState([]);
+
+  React.useEffect(() => {
+    getProducts().then(setAllProducts).catch(() => {});
+  }, []);
 
   const retryPayment = async (order) => {
     setRetrying(order.id);
@@ -192,7 +196,7 @@ export default function Profile() {
                 </div>
               ) : (
                 user.wishlist.map((id) => {
-                  const product = PRODUCTS.find((p) => p.id === id);
+                  const product = allProducts.find((p) => p.id === id);
                   if (!product) return null;
                   return (
                     <div key={product.id} className="border border-black p-4 bg-white flex flex-col justify-between group">

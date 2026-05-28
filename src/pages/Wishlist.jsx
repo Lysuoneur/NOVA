@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { getSafeImage } from "../api";
-import { PRODUCTS } from "../data/novaData";
+import { getSafeImage, getProducts } from "../api";
 import { useCartStore } from "../store/cart";
 import { useUserStore } from "../store/user";
 import { money } from "../utils/format";
@@ -11,6 +10,11 @@ export default function Wishlist() {
   const toggleWishlist = useUserStore((s) => s.toggleWishlist);
   const addToCart = useCartStore((s) => s.add);
   const [addedId, setAddedId] = React.useState(null);
+  const [allProducts, setAllProducts] = React.useState([]);
+
+  React.useEffect(() => {
+    getProducts().then(setAllProducts).catch(() => {});
+  }, []);
 
   if (!user) {
     return (
@@ -23,7 +27,7 @@ export default function Wishlist() {
     );
   }
 
-  const wishlist = PRODUCTS.filter((p) => user.wishlist?.includes(p.id));
+  const wishlist = allProducts.filter((p) => user.wishlist?.includes(p.id));
 
   const handleAdd = (p) => {
     addToCart(p, p.size?.[0] || "M", 1);
