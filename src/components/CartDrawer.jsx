@@ -10,7 +10,6 @@ export default function CartDrawer({ open }) {
   const setQty = useCartStore((s) => s.setQty);
   const remove = useCartStore((s) => s.remove);
   const subtotal = useCartStore((s) => s.subtotal)();
-  const shipping = subtotal > 50 ? 0 : subtotal === 0 ? 0 : 3.99;
 
   if (!open) return null;
   return createPortal(
@@ -49,15 +48,20 @@ export default function CartDrawer({ open }) {
           )}
           {items.map((i) => (
             <div key={i.id + i.size} className="flex gap-3 p-3 rounded-2xl border border-black/[0.06] bg-black/[0.01]">
-              <img
-                src={getSafeImage(i.image, "https://placehold.co/80x96/f5f5f5/999?text=?")}
-                alt={i.title}
-                className="w-20 h-24 object-cover rounded-xl flex-shrink-0"
-                onError={(e) => { e.target.src = "https://placehold.co/80x96/f5f5f5/999?text=?"; }}
-              />
+              <Link to={`/product/${i.id}`} onClick={() => setOpen(false)} className="flex-shrink-0">
+                <img
+                  src={getSafeImage(i.image, "https://placehold.co/80x96/f5f5f5/999?text=?")}
+                  alt={i.title}
+                  className="w-20 h-24 object-cover rounded-xl hover:opacity-80 transition-opacity"
+                  onError={(e) => { e.target.src = "https://placehold.co/80x96/f5f5f5/999?text=?"; }}
+                />
+              </Link>
               <div className="flex-1 min-w-0">
                 <div className="font-mono text-[9px] text-black/35 uppercase tracking-wider">{i.brand}</div>
-                <div className="text-sm font-semibold leading-snug mt-0.5 line-clamp-2">{i.title}</div>
+                <Link to={`/product/${i.id}`} onClick={() => setOpen(false)}
+                  className="text-sm font-semibold leading-snug mt-0.5 line-clamp-2 hover:underline block">
+                  {i.title}
+                </Link>
                 <div className="text-xs text-black/40 mt-0.5">Size {i.size}</div>
 
                 <div className="flex items-center justify-between mt-3">
@@ -95,24 +99,9 @@ export default function CartDrawer({ open }) {
         {items.length > 0 && (
           <div className="px-5 pb-6 pt-4 border-t border-black/[0.06] space-y-3">
             <div className="space-y-1.5 text-sm">
-              <div className="flex justify-between text-black/55">
-                <span>Subtotal</span>
-                <span>{money(subtotal)}</span>
-              </div>
-              <div className="flex justify-between text-black/55">
-                <span>Shipping</span>
-                <span className={shipping === 0 ? "text-gold font-medium" : ""}>
-                  {shipping === 0 ? "Free 🎉" : money(shipping)}
-                </span>
-              </div>
-              {subtotal > 0 && subtotal < 50 && (
-                <div className="text-xs text-gold font-mono">
-                  ${(50 - subtotal).toFixed(2)} away from free shipping
-                </div>
-              )}
-              <div className="flex justify-between font-bold pt-2 border-t border-black/[0.06] text-base">
+              <div className="flex justify-between font-bold text-base">
                 <span>Total</span>
-                <span>{money(subtotal + shipping)}</span>
+                <span>{money(subtotal)}</span>
               </div>
             </div>
 
