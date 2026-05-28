@@ -118,15 +118,22 @@ function Nav() {
   const items = useCartStore((s) => s.items);
   const count = items.reduce((a, b) => a + b.qty, 0);
   const loc = useLocation();
-  const [scrolled, setScrolled] = React.useState(false);
-  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [scrolled,  setScrolled]  = React.useState(false);
+  const [hidden,    setHidden]    = React.useState(false);
+  const [menuOpen,  setMenuOpen]  = React.useState(false);
   const user = useUserStore((s) => s.user);
   const wishlistCount = user?.wishlist?.length || 0;
   const isAdmin = user?.email === "admin@nova.com" || user?.role === "admin";
 
   React.useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 20);
+      setHidden(y > 80 && y > lastY);
+      lastY = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -139,6 +146,7 @@ function Nav() {
     <header
       className={clsx(
         "sticky top-0 z-40 transition-all duration-300",
+        hidden && "-translate-y-full",
         scrolled
           ? "bg-white/96 backdrop-blur-xl shadow-[0_1px_0_rgba(0,0,0,0.05),0_4px_20px_rgba(0,0,0,0.06)]"
           : "bg-white border-b border-black/[0.06]"
