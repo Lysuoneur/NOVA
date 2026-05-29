@@ -39,8 +39,9 @@ export default function Profile() {
     getProducts().then(setAllProducts).catch(() => {});
   }, []);
 
-  // Mark order as paid when returning from khqr.cc
+  // Mark order as paid when returning from khqr.cc — wait for user to load first
   React.useEffect(() => {
+    if (!user) return;
     const txId = searchParams.get("transaction_id");
     if (!txId) return;
     updateOrderStatus(txId, { payment_status: "paid" })
@@ -49,8 +50,8 @@ export default function Profile() {
         setPaymentConfirmed(true);
         setSearchParams({}, { replace: true });
       })
-      .catch(() => {});
-  }, []);
+      .catch((err) => console.error("Payment status update failed:", err));
+  }, [user]);
 
   const retryPayment = async (order) => {
     setRetrying(order.id);
