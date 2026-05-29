@@ -58,7 +58,7 @@ export default function Profile() {
       const payUrl = await buildKHQRPayURL({
         transactionId: order.id,
         amount:        order.total,
-        successUrl:    `${window.location.origin}/profile`,
+        successUrl:    `${window.location.origin}/profile?transaction_id=${order.id}`,
         remark:        "NOVA Order",
       });
       window.location.href = payUrl;

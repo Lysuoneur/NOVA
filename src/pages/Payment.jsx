@@ -54,7 +54,7 @@ function PaymentForm() {
 
       if (method === "bakong") {
         const orderId    = result?.id ?? result?.order_number ?? `ORD-${Date.now()}`;
-        const successUrl = `${window.location.origin}/profile`;
+        const successUrl = `${window.location.origin}/profile?transaction_id=${orderId}`;
         const payUrl     = await buildKHQRPayURL({
           transactionId: orderId,
           amount:        total,
