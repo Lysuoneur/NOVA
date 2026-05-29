@@ -16,6 +16,7 @@ import {
   fetchWishlist, toggleWishlistItem,
   updateUserProfile,
   fetchAdminStats, fetchAdminUsers, toggleUserBan, setUserRole,
+  subscribeToOrders,
 } from './firebase/db';
 
 // ── Image helpers (unchanged) ──────────────────────────────────────────────
@@ -159,3 +160,5 @@ export const getAdminUsers = () => fetchAdminUsers();
 export const toggleBanUser = (id) => toggleUserBan(id);
 
 export const updateUserRole = (id, role) => setUserRole(id, role);
+
+export { subscribeToOrders };

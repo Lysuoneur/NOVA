@@ -1,5 +1,5 @@
 import React from "react";
-import { getOrders, updateOrderStatus } from "../../api";
+import { updateOrderStatus, subscribeToOrders } from "../../api";
 import { money } from "../../utils/format";
 import { StatusBadge } from "./Dashboard";
 
@@ -11,15 +11,13 @@ export default function AdminOrders() {
   const [statusFilter, setStatusFilter] = React.useState("All");
   const [search, setSearch] = React.useState("");
 
-  const fetchOrders = () => {
-    setLoading(true);
-    getOrders()
-      .then(setOrders)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  };
-
-  React.useEffect(() => { fetchOrders(); }, []);
+  React.useEffect(() => {
+    const unsub = subscribeToOrders((data) => {
+      setOrders(data);
+      setLoading(false);
+    });
+    return () => unsub();
+  }, []);
 
   const handleStatusChange = async (id, newStatus) => {
     try {
@@ -52,18 +50,13 @@ export default function AdminOrders() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-end justify-between">
-        <div>
-          <h1 className="font-display text-5xl tracking-tight text-black">Orders</h1>
-          <p className="font-mono text-[11px] text-black/35 uppercase tracking-[0.18em] mt-1">{orders.length} total orders</p>
+      <div>
+        <h1 className="font-display text-5xl tracking-tight text-black">Orders</h1>
+        <div className="flex items-center gap-2 mt-1">
+          <p className="font-mono text-[11px] text-black/35 uppercase tracking-[0.18em]">{orders.length} total orders</p>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" title="Live" />
+          <span className="font-mono text-[10px] text-emerald-600 uppercase tracking-wider">Live</span>
         </div>
-        <button onClick={fetchOrders} disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 border border-black/15 rounded-xl text-xs font-mono uppercase tracking-wider hover:border-black transition-colors disabled:opacity-40">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={loading ? "animate-spin" : ""}>
-            <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-          </svg>
-          Refresh
-        </button>
       </div>
 
       <div className="flex flex-wrap gap-2">

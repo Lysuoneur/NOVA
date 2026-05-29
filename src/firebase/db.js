@@ -12,7 +12,7 @@
 import {
   collection, doc,
   getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
-  query, where, serverTimestamp,
+  query, where, serverTimestamp, onSnapshot,
 } from 'firebase/firestore';
 import { auth, db } from './config';
 
@@ -314,4 +314,19 @@ export const setUserRole = async (id, role) => {
     role:   data.role        ?? 'user',
     banned: data.banned      ?? false,
   };
+};
+
+/**
+ * Real-time listener for all orders (admin only).
+ * Calls callback(orders[]) every time any order changes in Firestore.
+ * Returns an unsubscribe function.
+ */
+export const subscribeToOrders = (callback) => {
+  const q = collection(db, 'orders');
+  return onSnapshot(q, (snap) => {
+    const orders = snap.docs
+      .map(d => normalizeOrder(d.id, d.data()))
+      .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+    callback(orders);
+  });
 };
