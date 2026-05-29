@@ -4,7 +4,6 @@ import { money } from "../../utils/format";
 import { StatusBadge } from "./Dashboard";
 
 const STATUSES = ["pending", "processing", "shipped", "delivered", "cancelled"];
-const PAYMENT_STATUSES = ["unpaid", "paid", "refunded"];
 
 export default function AdminOrders() {
   const [orders, setOrders] = React.useState([]);
@@ -25,15 +24,6 @@ export default function AdminOrders() {
       setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, ...updated } : o)));
     } catch (err) {
       console.error("Failed to update status:", err);
-    }
-  };
-
-  const handlePaymentStatusChange = async (id, paymentStatus) => {
-    try {
-      const updated = await updateOrderStatus(id, { payment_status: paymentStatus });
-      setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, ...updated } : o)));
-    } catch (err) {
-      console.error("Failed to update payment status:", err);
     }
   };
 
@@ -82,7 +72,7 @@ export default function AdminOrders() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-black/[0.02] border-b border-black/[0.05]">
-                {["Order", "Customer", "Items", "Total", "Payment", "Pay. Status", "Status", "Actions"].map((h) => (
+                {["Order", "Customer", "Items", "Total", "Payment", "Pay. Status", "Status", "Order Status"].map((h) => (
                   <th key={h} className="text-left px-5 py-3 text-[10px] font-mono uppercase tracking-[0.15em] text-black/30 font-normal">{h}</th>
                 ))}
               </tr>
@@ -99,12 +89,9 @@ export default function AdminOrders() {
                   <td className="px-5 py-3 text-[10px] text-black/40 uppercase font-mono">{o.payment_method}</td>
                   <td className="px-5 py-3 text-[10px] text-black/40 uppercase font-mono">{o.payment_status}</td>
                   <td className="px-5 py-3"><StatusBadge status={o.status} /></td>
-                  <td className="px-5 py-3 space-y-1.5">
+                  <td className="px-5 py-3">
                     <select value={o.status} onChange={(e) => handleStatusChange(o.id, e.target.value)} className="nova-input text-xs py-1 pr-6 w-full">
                       {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                    <select value={o.payment_status} onChange={(e) => handlePaymentStatusChange(o.id, e.target.value)} className="nova-input text-xs py-1 pr-6 w-full">
-                      {PAYMENT_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </td>
                 </tr>
