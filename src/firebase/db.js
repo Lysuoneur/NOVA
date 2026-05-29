@@ -13,6 +13,7 @@ import {
   collection, doc,
   getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
   query, where, serverTimestamp, onSnapshot,
+  getDocsFromServer, getDocFromServer,
 } from 'firebase/firestore';
 import { auth, db } from './config';
 
@@ -101,10 +102,10 @@ export const fetchOrders = async () => {
 
   let snap;
   if (role === 'admin') {
-    snap = await getDocs(collection(db, 'orders'));
+    snap = await getDocsFromServer(collection(db, 'orders'));
   } else {
     const q = query(collection(db, 'orders'), where('userId', '==', currentUid));
-    snap = await getDocs(q);
+    snap = await getDocsFromServer(q);
   }
 
   const orders = snap.docs.map(d => normalizeOrder(d.id, d.data()));
@@ -165,7 +166,7 @@ export const patchOrderStatus = async (id, patch) => {
   update.updatedAt = serverTimestamp();
 
   await updateDoc(ref, update);
-  const snap = await getDoc(ref);
+  const snap = await getDocFromServer(ref);
   return normalizeOrder(snap.id, snap.data());
 };
 
@@ -323,7 +324,18 @@ export const setUserRole = async (id, role) => {
  */
 export const subscribeToOrders = (callback) => {
   const q = collection(db, 'orders');
+
+  // Force fresh server read first to bypass any local cache
+  getDocsFromServer(q).then((snap) => {
+    const orders = snap.docs
+      .map(d => normalizeOrder(d.id, d.data()))
+      .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+    callback(orders);
+  }).catch(() => {});
+
+  // Then keep real-time listener for live updates
   return onSnapshot(q, (snap) => {
+    if (snap.metadata.fromCache) return; // skip stale cache snapshots
     const orders = snap.docs
       .map(d => normalizeOrder(d.id, d.data()))
       .sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
