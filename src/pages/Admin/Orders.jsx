@@ -11,12 +11,15 @@ export default function AdminOrders() {
   const [statusFilter, setStatusFilter] = React.useState("All");
   const [search, setSearch] = React.useState("");
 
-  React.useEffect(() => {
+  const fetchOrders = () => {
+    setLoading(true);
     getOrders()
       .then(setOrders)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  React.useEffect(() => { fetchOrders(); }, []);
 
   const handleStatusChange = async (id, newStatus) => {
     try {
@@ -49,9 +52,18 @@ export default function AdminOrders() {
 
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="font-display text-5xl tracking-tight text-black">Orders</h1>
-        <p className="font-mono text-[11px] text-black/35 uppercase tracking-[0.18em] mt-1">{orders.length} total orders</p>
+      <div className="flex items-end justify-between">
+        <div>
+          <h1 className="font-display text-5xl tracking-tight text-black">Orders</h1>
+          <p className="font-mono text-[11px] text-black/35 uppercase tracking-[0.18em] mt-1">{orders.length} total orders</p>
+        </div>
+        <button onClick={fetchOrders} disabled={loading}
+          className="flex items-center gap-2 px-4 py-2 border border-black/15 rounded-xl text-xs font-mono uppercase tracking-wider hover:border-black transition-colors disabled:opacity-40">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={loading ? "animate-spin" : ""}>
+            <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+          Refresh
+        </button>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -87,7 +99,15 @@ export default function AdminOrders() {
                   </td>
                   <td className="px-5 py-3 font-mono font-bold text-black">{money(o.total)}</td>
                   <td className="px-5 py-3 text-[10px] text-black/40 uppercase font-mono">{o.payment_method}</td>
-                  <td className="px-5 py-3 text-[10px] text-black/40 uppercase font-mono">{o.payment_status}</td>
+                  <td className="px-5 py-3">
+                    <span className={`font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border
+                      ${o.payment_status === "paid"     ? "bg-emerald-50 text-emerald-700 border-emerald-300" :
+                        o.payment_status === "pending"  ? "bg-amber-50 text-amber-700 border-amber-300" :
+                        o.payment_status === "refunded" ? "bg-purple-50 text-purple-700 border-purple-300" :
+                                                          "bg-stone-50 text-stone-500 border-stone-200"}`}>
+                      {o.payment_status || "unpaid"}
+                    </span>
+                  </td>
                   <td className="px-5 py-3"><StatusBadge status={o.status} /></td>
                   <td className="px-5 py-3">
                     <select value={o.status} onChange={(e) => handleStatusChange(o.id, e.target.value)} className="nova-input text-xs py-1 pr-6 w-full">
