@@ -1,6 +1,6 @@
 import React from "react";
-import { Link, Navigate } from "react-router-dom";
-import { getSafeImage, getProducts } from "../api";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
+import { getSafeImage, getProducts, updateOrderStatus } from "../api";
 import { useCartStore } from "../store/cart";
 import { useUserStore } from "../store/user";
 import { money } from "../utils/format";
@@ -28,12 +28,28 @@ export default function Profile() {
   const logout         = useUserStore((s) => s.logout);
   const toggleWishlist = useUserStore((s) => s.toggleWishlist);
   const addToCart      = useCartStore((s) => s.add);
-  const [tab, setTab]       = React.useState("orders");
+  const [tab, setTab]           = React.useState("orders");
   const [retrying, setRetrying] = React.useState(null);
   const [allProducts, setAllProducts] = React.useState([]);
+  const [paymentConfirmed, setPaymentConfirmed] = React.useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const syncOrders = useUserStore((s) => s.syncOrders);
 
   React.useEffect(() => {
     getProducts().then(setAllProducts).catch(() => {});
+  }, []);
+
+  // Mark order as paid when returning from khqr.cc
+  React.useEffect(() => {
+    const txId = searchParams.get("transaction_id");
+    if (!txId) return;
+    updateOrderStatus(txId, { payment_status: "paid" })
+      .then(() => syncOrders())
+      .then(() => {
+        setPaymentConfirmed(true);
+        setSearchParams({}, { replace: true });
+      })
+      .catch(() => {});
   }, []);
 
   const retryPayment = async (order) => {
@@ -76,6 +92,17 @@ export default function Profile() {
   return (
     <div className="max-w-7xl mx-auto px-5 py-16 text-black bg-white min-h-screen relative">
       <div className="absolute inset-0 grid-lines-bg opacity-[0.12] pointer-events-none" />
+
+      {/* Payment success banner */}
+      {paymentConfirmed && (
+        <div className="relative z-10 mb-6 flex items-center gap-3 bg-emerald-50 border border-emerald-300 rounded-xl px-5 py-3.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span className="font-mono text-sm text-emerald-800 font-bold uppercase tracking-wider">Payment confirmed — your order is now paid!</span>
+          <button onClick={() => setPaymentConfirmed(false)} className="ml-auto text-emerald-500 hover:text-emerald-800">✕</button>
+        </div>
+      )}
 
       {/* Header */}
       <div className="relative z-10 flex flex-col md:flex-row items-start md:items-end justify-between border-b-2 border-black pb-8 mb-12 gap-6">
